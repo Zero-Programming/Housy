@@ -14,7 +14,7 @@ import (
 	"gorm.io/datatypes"
 )
 
-var path_file = "http://localhost:5000/uploads/"
+var path_file = "http://localhost:8080/uploads/"
 
 type handlerHouse struct {
 	HouseRepository repositories.HouseRepository

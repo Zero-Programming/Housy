@@ -18,12 +18,14 @@ import (
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/coreapi"
 	"github.com/midtrans/midtrans-go/snap"
+
+	"gopkg.in/gomail.v2"
 )
 
 var c = coreapi.Client{
 	ServerKey: os.Getenv("SERVER_KEY"),
-	ClientKey:  os.Getenv("CLIENT_KEY"),
-  }
+	ClientKey: os.Getenv("CLIENT_KEY"),
+}
 
 type handlerTransaction struct {
 	TransactionRepository repositories.TransactionRepository
@@ -68,60 +70,6 @@ func (h *handlerTransaction) GetTransaction(w http.ResponseWriter, r *http.Reque
 func (h *handlerTransaction) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// HouseId, _ := strconv.Atoi(r.FormValue("house_id"))
-	// UserId, _ := strconv.Atoi(r.FormValue("user_id"))
-	// Total, _ := strconv.Atoi(r.FormValue("total"))
-	// request := transactiondto.RequestTransaction{
-	// 	CheckIn:       r.FormValue("check_in"),
-	// 	CheckOut:      r.FormValue("check_out"),
-	// 	HouseId:       HouseId,
-	// 	UserId:        UserId,
-	// 	Total:         Total,
-	// 	StatusPayment: r.FormValue("status_payment"),
-	// }
-
-	// if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-	// 	w.WriteHeader(http.StatusBadRequest)
-	// 	response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
-	// 	json.NewEncoder(w).Encode(response)
-	// 	return
-	// }
-
-	// validation := validator.New()
-	// err := validation.Struct(request)
-	// if err != nil {
-	// 	w.WriteHeader(http.StatusBadRequest)
-	// 	response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
-	// 	json.NewEncoder(w).Encode(response)
-	// 	return
-	// }
-
-	// transaction := models.Transaction{
-	// 	CheckIn:       request.CheckIn,
-	// 	CheckOut:      request.CheckOut,
-	// 	HouseId:       request.HouseId,
-	// 	UserId:        request.UserId,
-	// 	Total:         request.Total,
-	// 	StatusPayment: request.StatusPayment,
-	// }
-
-	// data, err := h.TransactionRepository.CreateTransaction(transaction)
-	// if err != nil {
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
-	// 	json.NewEncoder(w).Encode(response)
-	// }
-
-	// w.WriteHeader(http.StatusOK)
-	// response := dto.SuccessResult{Code: http.StatusOK, Data: convertResponseTransaction(data)}
-	// json.NewEncoder(w).Encode(response)
-
-
-
-
-	// userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
-	// userId := int(userInfo["id"].(float64))
-
 	var request transactiondto.RequestTransaction
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
@@ -142,14 +90,14 @@ func (h *handlerTransaction) CreateTransaction(w http.ResponseWriter, r *http.Re
 	}
 
 	transaction := models.Transaction{
-		ID:			TransactionId,
+		ID:            TransactionId,
 		CheckIn:       request.CheckIn,
 		CheckOut:      request.CheckOut,
 		HouseId:       request.HouseId,
 		UserId:        request.UserId,
 		Total:         request.Total,
 		StatusPayment: request.StatusPayment,
-	// }
+		// }
 	}
 
 	log.Print(transaction)
@@ -186,121 +134,59 @@ func (h *handlerTransaction) CreateTransaction(w http.ResponseWriter, r *http.Re
 	}
 
 	snapResp, _ := s.CreateTransaction(req)
-	fmt.Println("ini snaprespOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONNN", snapResp)
-
-	// if err != nil {
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	json.NewEncoder(w).Encode(err.Error())
-	// 	return
-	// }
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: snapResp}
 	json.NewEncoder(w).Encode(response)
 }
 
+// Notification method ...
 func (h *handlerTransaction) Notification(w http.ResponseWriter, r *http.Request) {
 	var notificationPayload map[string]interface{}
-  
+
 	err := json.NewDecoder(r.Body).Decode(&notificationPayload)
 	if err != nil {
-	  w.WriteHeader(http.StatusBadRequest)
-	  response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
-	  json.NewEncoder(w).Encode(response)
-	  return
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
 	}
-  
+
 	transactionStatus := notificationPayload["transaction_status"].(string)
 	fraudStatus := notificationPayload["fraud_status"].(string)
-	orderId := notificationPayload["order_id"].(string)
-  
-	if transactionStatus == "capture" {
-	  if fraudStatus == "challenge" {
-		// TODO set transaction status on your database to 'challenge'
-		// e.g: 'Payment status challenged. Please take action on your Merchant Administration Portal
-		h.TransactionRepository.UpdateTransaction("pending",  orderId)
-	  } else if fraudStatus == "accept" {
-		// TODO set transaction status on your database to 'success'
-		h.TransactionRepository.UpdateTransaction("success",  orderId)
-	  }
-	} else if transactionStatus == "settlement" {
-	  // TODO set transaction status on your databaase to 'success'
-	  h.TransactionRepository.UpdateTransaction("success",  orderId)
-	} else if transactionStatus == "deny" {
-	  // TODO you can ignore 'deny', because most of the time it allows payment retries
-	  // and later can become success
-	  h.TransactionRepository.UpdateTransaction("failed",  orderId)
-	} else if transactionStatus == "cancel" || transactionStatus == "expire" {
-	  // TODO set transaction status on your databaase to 'failure'
-	  h.TransactionRepository.UpdateTransaction("failed",  orderId)
-	} else if transactionStatus == "pending" {
-	  // TODO set transaction status on your databaase to 'pending' / waiting payment
-	  h.TransactionRepository.UpdateTransaction("pending",  orderId)
+	orderId := notificationPayload["order_id"].(string) // 112233
+
+	transaction, err := h.TransactionRepository.GetOneTransaction(orderId)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
 	}
-  
-	w.WriteHeader(http.StatusOK)
-  }
 
-// func (h *handlerTransaction) UpdateTransaction(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json")
+	if transactionStatus == "capture" {
+		if fraudStatus == "challenge" {
+			SendMail("success", transaction)
+			h.TransactionRepository.UpdateTransaction("pending", orderId)
+		} else if fraudStatus == "accept" {
+			SendMail("success", transaction)
+			h.TransactionRepository.UpdateTransaction("success", orderId)
+		}
+	} else if transactionStatus == "settlement" {
+		SendMail("success", transaction)
+		h.TransactionRepository.UpdateTransaction("success", orderId)
+	} else if transactionStatus == "deny" {
+		SendMail("success", transaction)
+		h.TransactionRepository.UpdateTransaction("failed", orderId)
+	} else if transactionStatus == "cancel" || transactionStatus == "expire" {
+		SendMail("success", transaction)
+		h.TransactionRepository.UpdateTransaction("failed", orderId)
+	} else if transactionStatus == "pending" {
+		SendMail("success", transaction)
+		h.TransactionRepository.UpdateTransaction("pending", orderId)
+	}
 
-// 	HouseId, _ := strconv.Atoi(r.FormValue("house_id"))
-// 	UserId, _ := strconv.Atoi(r.FormValue("user_id"))
-// 	Total, _ := strconv.Atoi(r.FormValue("total"))
-// 	request := transactiondto.RequestTransaction{
-// 		CheckIn:       r.FormValue("check_in"),
-// 		CheckOut:      r.FormValue("check_out"),
-// 		HouseId:       HouseId,
-// 		UserId:        UserId,
-// 		Total:         Total,
-// 		StatusPayment: r.FormValue("status_payment"),
-// 	}
-
-// 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
-// 	transaction, err := h.TransactionRepository.GetTransaction(int(id))
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
-// 		json.NewEncoder(w).Encode(response)
-// 		return
-// 	}
-
-// 	if request.CheckIn != "" {
-// 		transaction.CheckIn = request.CheckIn
-// 	}
-
-// 	if request.CheckOut != "" {
-// 		transaction.CheckOut = request.CheckOut
-// 	}
-
-// 	if request.HouseId != 0 {
-// 		transaction.HouseId = request.HouseId
-// 	}
-
-// 	if request.UserId != 0 {
-// 		transaction.UserId = request.UserId
-// 	}
-
-// 	if request.Total != 0 {
-// 		transaction.Total = request.Total
-// 	}
-
-// 	if request.StatusPayment != "" {
-// 		transaction.StatusPayment = request.StatusPayment
-// 	}
-
-// 	data, err := h.TransactionRepository.UpdateTransaction(transaction)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
-// 		json.NewEncoder(w).Encode(response)
-// 		return
-// 	}
-
-// 	w.WriteHeader(http.StatusOK)
-// 	response := dto.SuccessResult{Code: http.StatusOK, Data: data}
-// 	json.NewEncoder(w).Encode(response)
-// }
+}
 
 func (h *handlerTransaction) DeleteTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -326,6 +212,61 @@ func (h *handlerTransaction) DeleteTransaction(w http.ResponseWriter, r *http.Re
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: data}
 	json.NewEncoder(w).Encode(response)
+}
+
+func SendMail(status string, transaction models.Transaction) {
+
+	if status != transaction.StatusPayment && (status == "success") {
+		var CONFIG_SMTP_HOST = "smtp.gmail.com"
+		var CONFIG_SMTP_PORT = 587
+		var CONFIG_SENDER_NAME = "Housy <zero@tsmail.id>"
+		var CONFIG_AUTH_EMAIL = os.Getenv("EMAIL_SYSTEM")
+		var CONFIG_AUTH_PASSWORD = os.Getenv("PASSWORD_SYSTEM")
+
+		var productName = transaction.House.Name
+		var price = strconv.Itoa(transaction.House.Price)
+
+		mailer := gomail.NewMessage()
+		mailer.SetHeader("From", CONFIG_SENDER_NAME)
+		mailer.SetHeader("To", transaction.User.Email)
+		mailer.SetHeader("Subject", "Transaction Status")
+		mailer.SetBody("text/html", fmt.Sprintf(`<!DOCTYPE html>
+	  <html lang="en">
+		<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<style>
+		  h1 {
+		  color: brown;
+		  }
+		</style>
+		</head>
+		<body>
+		<h2>Product payment :</h2>
+		<ul style="list-style-type:none;">
+		  <li>Name : %s</li>
+		  <li>Total payment: Rp.%s</li>
+		  <li>Status : <b>%s</b></li>
+		</ul>
+		</body>
+	  </html>`, productName, price, status))
+
+		dialer := gomail.NewDialer(
+			CONFIG_SMTP_HOST,
+			CONFIG_SMTP_PORT,
+			CONFIG_AUTH_EMAIL,
+			CONFIG_AUTH_PASSWORD,
+		)
+
+		err := dialer.DialAndSend(mailer)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+
+		log.Println("Mail sent! to " + transaction.User.Email)
+	}
 }
 
 func convertResponseTransaction(u models.Transaction) transactiondto.ResponseTransaction {

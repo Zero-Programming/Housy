@@ -10,10 +10,88 @@ import React, { useState } from "react";
 import ToggleButton from "react-bootstrap/ToggleButton";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
+import { useQuery } from "react-query";
+import { API } from "../config/api";
 
 // style={{ widht: "30rem", paddingTop: "100px", zIndex: "10" }}
 
 export default function Filter() {
+
+  // let { data: houses } = useQuery("housesCache", async () => {
+  //   const response = await API.get("/houses");
+  //   return response.data.data;
+  // });
+
+  // const [filters, setFilters] = useState({
+  //   name: "",
+  //   city_name: "",
+  //   address: "",
+  //   price: 0,
+  //   type_rent: "",
+  //   amenities: [],
+  //   bedroom: 0,
+  //   bathroom: 0,
+  //   image: "",
+  // });
+
+  // const handleChange = (event) => {
+  //   setFilters({
+  //     ...filters,
+  //     [event.target.name]: event.target.value,
+  //   });
+  // };
+
+  // const handleCheckbox = (event) => {
+  //   const newAmenities = [...filters.amenities];
+  //   if (event.target.checked) {
+  //     newAmenities.push(event.target.value);
+  //   } else {
+  //     const index = newAmenities.indexOf(event.target.value);
+  //     newAmenities.splice(index, 1);
+  //   }
+  //   setFilters({
+  //     ...filters,
+  //     amenities: newAmenities,
+  //   });
+  // };
+
+  // const filteredData = houses.filter((data) => {
+  //   if (filters.name && !data.name.toLowerCase().includes(filters.name.toLowerCase())) {
+  //     return false;
+  //   }
+  //   if (filters.city_name && data.city_name.toLowerCase() !== filters.city_name.toLowerCase()) {
+  //     return false;
+  //   }
+  //   if (filters.address && !data.address.toLowerCase().includes(filters.address.toLowerCase())) {
+	// 	return false;
+  //   }
+  //   if (filters.price && data.price > filters.price) {
+  //     return false;
+  //   }
+  //   if (filters.type_rent && data.type_rent.toLowerCase() !== filters.type_rent.toLowerCase()) {
+  //     return false;
+  //   }
+  //   if (filters.amenities.length > 0) {
+  //     let flag = false;
+  //     filters.amenities.forEach((amenity) => {
+  //       if (data.amenities.includes(amenity)) {
+  //         flag = true;
+  //       }
+  //     });
+  //     if (!flag) {
+  //       return false;
+  //     }
+  //   }
+  //   if (filters.bedroom && data.bedroom < filters.bedroom) {
+  //     return false;
+  //   }
+  //   if (filters.bathroom && data.bathroom < filters.bathroom) {
+  //     return false;
+  //   }
+  //   return true;
+  // });
+
+
   return (
     <Col className="fixed-top bg-white ps-4" sm={3} style={{ height: "100vh", zIndex: "10", overflow: "auto", padding: "0", paddingTop: "90px" }}>
       <Form className=" d-flex flex-column gap-3 me-4 px-3" action="">

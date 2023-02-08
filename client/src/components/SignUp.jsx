@@ -25,14 +25,7 @@ export default function SignUp(props) {
     props.onHide();
     props.openSignin();
   };
-
-  // const handleOnSubmit = (e) => {
-  //   e.preventDefault();
-  //   localStorage.setItem("UserSignUp", JSON.stringify(userSignUp));
-  //   redirectSignin();
-  //   alert("Register Success!");
-  // };
-
+  
   const handleOnChange = (e) => {
     setUserSignUp({
       ...userSignUp,

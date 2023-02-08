@@ -15,9 +15,11 @@ export default function ContentData() {
   });
 
   console.log(houses);
+
+  
   return (
     <>
-      <Col className="d-flex p-0" style={{ marginLeft: "370px" }}>
+      <Col className="d-flex p-0" style={{ marginLeft: "380px" }}>
         <div className="ms-1 w100" style={{ paddingTop: "105px" }}>
           <div className="d-flex warp gap-3 w100">
             {houses?.map((value, index) => {

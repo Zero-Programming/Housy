@@ -17,7 +17,6 @@ import { UserContext } from "../context/userContext";
 
 function DropdwonLogin(props) {
   const [state, dispatch] = useContext(UserContext);
-  console.log(state.user.listAsRole);
 
   let navigate = useNavigate();
 

@@ -24,3 +24,4 @@ type House struct {
 func (House) TableName() string {
 	return "houses"
 }
+
