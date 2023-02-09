@@ -12,8 +12,6 @@ import "../styles/style.css";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import DropdownLogin from "./Dropdown";
-import { useContext } from "react";
-import { UserContext } from "../context/userContext";
 
 function NavbarProject(props) {
   const [modalSignIn, setModalSignIn] = React.useState(false);
@@ -26,7 +24,9 @@ function NavbarProject(props) {
   const handleSignin = () => {
     setModalSignIn(true);
   };
-  
+
+
+
   return (
     <Navbar bg="white" expand="lg" className="fixed-top px-4">
       <Container fluid>
@@ -59,7 +59,7 @@ function NavbarProject(props) {
               </>
             )}
 
-            <SignIn openSignup={handleSignup} userSignIn={props.userSignIn} setUserSignIn={props.setUserSignIn} show={modalSignIn} onHide={() => setModalSignIn(false)} />
+            <SignIn openSignup={handleSignup} show={modalSignIn} onHide={() => setModalSignIn(false)} />
             <SignUp openSignin={handleSignin} show={modalSignUp} onHide={() => setModalSignUp(false)} />
           </Nav>
         </Navbar.Collapse>

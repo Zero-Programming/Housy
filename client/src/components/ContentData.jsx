@@ -14,8 +14,6 @@ export default function ContentData() {
     return response.data.data;
   });
 
-  console.log(houses);
-
   
   return (
     <>

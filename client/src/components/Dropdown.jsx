@@ -18,10 +18,11 @@ import { UserContext } from "../context/userContext";
 function DropdwonLogin(props) {
   const [state, dispatch] = useContext(UserContext);
 
+  console.log(state)
+
   let navigate = useNavigate();
 
   const logout = () => {
-    console.log(state);
     dispatch({
       type: "LOGOUT",
     });

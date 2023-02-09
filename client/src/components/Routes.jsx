@@ -16,85 +16,75 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 
 export default function RoutesPage() {
-
-  const navigate = useNavigate();
-
+  let navigate = useNavigate();
   const [state, dispatch] = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(true);
 
+  console.log(state);
   useEffect(() => {
-    // Redirect Auth
-    if (state.isLogin == false && !isLoading) {
-      navigate("/");
-    } else {
-      if (!isLoading) {
-        if (state.user.listAsRole == "Owner") {
+    if (localStorage.token) {
+      setAuthToken(localStorage.token);
+    }
+
+    if (!isLoading) {
+      if (state.isLogin === false) {
+        navigate("/");
+      } else {
+        if (state.user.listAsRole === "Owner") {
           navigate("/home-owner");
-        } else if (state.user.listAsRole == "Tenant") {
-          navigate("/");
         }
       }
     }
+    // Redirect Auth
   }, [state]);
 
   const checkUser = async () => {
     try {
       const response = await API.get("/check-auth");
 
+      // If the token incorrect
       if (response.status === 404) {
         return dispatch({
           type: "AUTH_ERROR",
         });
       }
 
-      console.log(response.data.data);
-
+      // Get user data
       let payload = response.data.data;
-      // console.log(response.data);
+      // Get token from local storage
+      payload.token = localStorage.token;
 
       // Send data to useContext
       dispatch({
         type: "USER_SUCCESS",
         payload,
       });
-      console.log(state);
       setIsLoading(false);
     } catch (error) {
-      setIsLoading(false);
       console.log(error);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     if (localStorage.token) {
-      setAuthToken(localStorage.token);
       checkUser();
-    } else {
-      setIsLoading(false);
     }
   }, []);
 
-  console.log(state.user);
-
   return (
     <>
-      {isLoading ? (
-        <></>
-      ) : (
-        <>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/detail-property/:id" element={<DetailProperty book />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/my-booking/:id" element={<MyBooking />} />
-            <Route path="/history/" element={<Invoice />} />
-            <Route path="/home-owner" element={<HomeOwner />} />
-            <Route element={<PrivateRoute />}>
-              <Route path="/add-property" element={<AddProperty />} />
-            </Route>
-          </Routes>
-        </>
-      )}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/detail-property/:id" element={<DetailProperty book />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/my-booking/:id" element={<MyBooking />} />
+        <Route path="/history/" element={<Invoice />} />
+        <Route path="/home-owner" element={<HomeOwner />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/add-property" element={<AddProperty />} />
+        </Route>
+      </Routes>
     </>
   );
 }
