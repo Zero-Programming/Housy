@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import { useState } from "react";
 import DetailProperty from "../pages/DetailProperty";
@@ -14,13 +14,18 @@ import { useEffect } from "react";
 import { UserContext } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
+import InvoiceOwner from "../pages/invoiceOwner";
+import MybookingHistory from "../pages/mybookinghistory";
+import { useQuery } from "react-query";
 
 export default function RoutesPage() {
+
+
+  // console.log();
+
   let navigate = useNavigate();
   const [state, dispatch] = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(true);
-
-  console.log(state);
   useEffect(() => {
     if (localStorage.token) {
       setAuthToken(localStorage.token);
@@ -79,10 +84,12 @@ export default function RoutesPage() {
         <Route path="/detail-property/:id" element={<DetailProperty book />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/my-booking/:id" element={<MyBooking />} />
+        <Route path="my-booking" element={<MybookingHistory />} />
         <Route path="/history/" element={<Invoice />} />
         <Route path="/home-owner" element={<HomeOwner />} />
         <Route element={<PrivateRoute />}>
           <Route path="/add-property" element={<AddProperty />} />
+          <Route path="/history-owner" element={<InvoiceOwner />} />
         </Route>
       </Routes>
     </>

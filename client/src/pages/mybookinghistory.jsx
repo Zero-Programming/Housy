@@ -16,7 +16,7 @@ import Moment from "react-moment";
 import { convert } from "rupiah-format";
 import NavbarWithoutSearch from "../components/NavbarWithoutSearch";
 
-export default function Invoice(props) {
+export default function MybookingHistory() {
   useEffect(() => {
     document.body.style.background = "rgba(196, 196, 196, 0.25)";
   });
@@ -33,9 +33,9 @@ export default function Invoice(props) {
 
   return (
     <>
-      <NavbarWithoutSearch userSignIn={props.userSignIn} setUserSignIn={props.setUserSignIn} />;
+      <NavbarWithoutSearch />;
       {transactions?.map((value, index) => {
-        if (value.user.id === state.user.id) {
+        if (value.user.id === state.user.id && value.status_payment === "success") {
           return (
             <Container className="myc fmb" style={{ width: "60%", marginTop: "200px" }}>
               <div className="border border-3 p-4 pe-0 pb-0">
@@ -57,17 +57,7 @@ export default function Invoice(props) {
                   <Col className="" md="auto" lg={4}>
                     <h5 className="fw-bold">{value.house.name}</h5>
                     <p>{value.house.address}</p>
-                    <p
-                      className={
-                        value.status_payment === "success"
-                          ? "text-success bg-success w-50 text-center p-1 bg-opacity-10 text-success"
-                          : value.status_payment === "Pending"
-                          ? "text-warning bg-warning w-50 text-center p-1 bg-opacity-10 text-warning"
-                          : "text-danger bg-danger w-50 text-center p-1 bg-opacity-10 text-danger"
-                      }
-                    >
-                      {value.status_payment}
-                    </p>
+                    <p className="bg-success w-50 text-center p-1 bg-opacity-10 text-success">{value.status_payment}</p>
                   </Col>
                   <Col className="" md="auto" lg={4}>
                     <div className="d-flex flex-column ">
@@ -158,10 +148,8 @@ export default function Invoice(props) {
                     <Col className="d-flex align-items-center" lg={2}>
                       <p className=" m-0 ps-3 py-2">Total</p>
                     </Col>
-                    <Col className="d-flex align-items-center p-0" lg={2}>
-                      <p className={value.status_payment === "success" ? "m-0 p-0 text-success fw-bold" : value.status_payment === "Pending" ? "m-0 p-0 text-warning fw-bold" : "m-0 p-0 text-danger fw-bold"}>
-                        : {convert(value.house.price)}
-                      </p>
+                    <Col className="d-flex align-items-center" lg={2}>
+                      <p className="m-0 text-success fw-bold">: {convert(value.house.price)}</p>
                     </Col>
                   </Row>
                 </Row>

@@ -1,9 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/esm/Container";
-import NavbarProject from "../components/NavbarProject";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
-import imgp from "../assets/img/imgp.png";
 import imgp1 from "../assets/img/imgp1.png";
 import imgp2 from "../assets/img/imgp2.png";
 import imgp3 from "../assets/img/imgp3.png";
@@ -15,6 +13,9 @@ import Button from "react-bootstrap/esm/Button";
 import ChangePassword from "../components/ChangePassword";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
+import NavbarWithoutSearch from "../components/NavbarWithoutSearch";
+import { useQuery, useMutation } from "react-query";
+import { API } from "../config/api";
 
 export default function Profile(props) {
   useEffect(() => {
@@ -22,13 +23,46 @@ export default function Profile(props) {
   });
 
   const [state, dispatch] = useContext(UserContext);
-  console.log(state.user);
+
+  console.log(state.user.id);
+
+  const id = state.user.id;
+
+  let { data: userId } = useQuery("userCache", async () => {
+    const response = await API.get("/user/"+id);
+    return response.data.data;
+  });
+
+  console.log(userId)
+
+  const [user, setUser] = useState([]); //Store all category data
+  const [preview, setPreview] = useState(null); //For image preview
+
+  // const handleFileUpload = (event) => {
+  //   setFile(event.target.files[0]);
+  // };
+
+  // const handleSubmit = async event => {
+  //   event.preventDefault();
+
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+
+  //   const res = await , {
+  //     method: "POST",
+  //     body: formData
+  //   });
+
+  //   const data = await res.json();
+  //   console.log(data);
+  // };
+
 
   const [modalShow, setModalShow] = React.useState(false);
 
   return (
     <div className="">
-      <NavbarProject />
+      <NavbarWithoutSearch />
       <Container className="">
         <Row className="pp justify-content-between bg-white">
           <Col className="d-flex flex-column gap-4" sm={4}>
@@ -90,10 +124,24 @@ export default function Profile(props) {
           </Col>
           <Col className="p-0 d-flex flex-column gap-3" sm={4}>
             <div>
-              <img className="w-100 rounded" src={imgp} alt="" />
+              {preview && (
+                <div>
+                  <img
+                    src={preview}
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      objectFit: "cover",
+                    }}
+                    alt={preview}
+                  />
+                </div>
+              )}
             </div>
             <div>
-              <Button className="w-100 text-dark bd bg">Change Foto Profile</Button>
+              <Button type="submit" className="w-100 text-dark bd bg">
+                Change Foto Profile
+              </Button>
             </div>
           </Col>
         </Row>

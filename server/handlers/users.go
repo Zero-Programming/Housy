@@ -87,6 +87,10 @@ func convertResponse(u models.User) usersdto.UserResponse {
 		Email:      u.Email,
 		Password:   u.Password,
 		ListAsRole: u.ListAsRole,
+		Address:    u.Address,
+		Gender:     u.Gender,
+		Phone:      u.Phone,
+		Image:      u.Image,
 	}
 }
 
@@ -142,8 +146,8 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		user.Phone = request.Phone
 	}
 
-	// if request.Profile.Image != "" {
-	// 	user.Profile.Image = request.Profile.Image
+	// if request. != "" {
+	// 	user.Image = request.Profile.Image
 	// }
 
 	data, err := h.UserRepository.UpdateUser(user)

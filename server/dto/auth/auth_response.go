@@ -10,6 +10,7 @@ type SignUpResponse struct {
 	Gender     string `json:"gender" gorm:"type: varchar(225)"`
 	Phone      string `json:"phone" gorm:"type: varchar(225)"`
 	Address    string `json:"address" gorm:"type: varchar(225)"`
+	Image      string `json:"image" gorm:"type: varchar(255)" `
 	Message    string `json:"message" gorm:"type: varchar(255"`
 }
 
@@ -23,6 +24,7 @@ type SignInResponse struct {
 	Gender     string `json:"gender" gorm:"type: varchar(225)"`
 	Phone      string `json:"phone" gorm:"type: varchar(225)"`
 	Address    string `json:"address" gorm:"type: varchar(225)"`
+	Image      string `json:"image" gorm:"type: varchar(255)" `
 	Token      string `json:"token" gorm:"type: varchar(225)"`
 }
 
@@ -36,5 +38,6 @@ type CheckAuthResponse struct {
 	Gender     string `json:"gender" gorm:"type: varchar(225)"`
 	Phone      string `json:"phone" gorm:"type: varchar(225)"`
 	Address    string `json:"address" gorm:"type: varchar(225)"`
+	Image      string `json:"image" gorm:"type: varchar(255)" `
 	Token      string `json:"token" gorm:"type: varchar(225)"`
 }

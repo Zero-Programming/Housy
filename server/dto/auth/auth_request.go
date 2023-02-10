@@ -10,6 +10,7 @@ type SignUpRequest struct {
 	Gender     string `json:"gender" gorm:"type: varchar(225)"`
 	Phone      string `json:"phone" gorm:"type: varchar(225)"`
 	Address    string `json:"address" gorm:"type: varchar(225)"`
+	// Image      string `json:"image" gorm:"type: varchar(255)" `
 }
 
 type SignInRequest struct {

@@ -35,10 +35,10 @@ export default function SignIn(props) {
         type: "LOGIN_SUCCESS",
         payload: response.data.data,
       });
-      alert("login succses!");
+      alert("Login succses!");
       props.onHide();
     } catch (error) {
-      alert("email or password wrong!");
+      alert("Email or password wrong!");
       console.log(error);
     }
   });

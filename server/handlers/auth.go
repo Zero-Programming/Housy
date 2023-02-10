@@ -74,6 +74,7 @@ func (h *handlerAuth) SignUp(w http.ResponseWriter, r *http.Request) {
 		Gender:     request.Gender,
 		Phone:      request.Phone,
 		Address:    request.Address,
+		// Image:      filename,
 	}
 
 	data, err := h.AuthRepository.SignUp(user)
@@ -93,6 +94,7 @@ func (h *handlerAuth) SignUp(w http.ResponseWriter, r *http.Request) {
 		Phone:      data.Phone,
 		ListAsRole: data.ListAsRole,
 		Address:    data.Address,
+		// Image:      data.Image,
 		Message:    "Succesfully Sign Up!",
 	}
 
@@ -157,6 +159,7 @@ func (h *handlerAuth) SignIn(w http.ResponseWriter, r *http.Request) {
 		Gender:     user.Gender,
 		Phone:      user.Phone,
 		Address:    user.Address,
+		// Image:      user.Image,
 		Token:      token,
 	}
 
@@ -185,13 +188,13 @@ func (h *handlerAuth) CheckAuth(w http.ResponseWriter, r *http.Request) {
 		ID:         user.ID,
 		Fullname:   user.Fullname,
 		Email:      user.Email,
-		Password: user.Password,
-		Username: user.Username,
-		Gender: user.Gender,
-		Phone: user.Phone,
-		Address: user.Address,
+		Password:   user.Password,
+		Username:   user.Username,
+		Gender:     user.Gender,
+		Phone:      user.Phone,
+		Address:    user.Address,
+		// Image:      user.Image,
 		ListAsRole: user.ListAsRole,
-
 	}
 
 	w.Header().Set("Content-Type", "application/json")

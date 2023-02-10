@@ -25,7 +25,7 @@ export default function SignUp(props) {
     props.onHide();
     props.openSignin();
   };
-  
+
   const handleOnChange = (e) => {
     setUserSignUp({
       ...userSignUp,
@@ -37,23 +37,12 @@ export default function SignUp(props) {
     try {
       e.preventDefault();
       const response = await API.post("/sign-up", userSignUp);
-
-      const alert = (
-        <Alert variant="success" className="py-1">
-          Register Success
-        </Alert>
-      );
-      setMessage(alert);
+      alert("Register succses!");
       console.log("habis register : ", response);
 
       // Handling response here
     } catch (error) {
-      const alert = (
-        <Alert variant="danger" className="py-1">
-          Failed
-        </Alert>
-      );
-      setMessage(alert);
+      alert("Register failed!");
       console.log(error);
     }
   });
@@ -67,7 +56,6 @@ export default function SignUp(props) {
         }}
       >
         <h1 className="fw-bold text-center my-5">Sign Up</h1>
-        {/* {message && message} */}
         <Form
           onSubmit={(e) => handleOnSubmit.mutate(e)}
           style={{

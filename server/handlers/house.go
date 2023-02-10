@@ -72,14 +72,16 @@ func (h *handlerHouse) CreateHouse(w http.ResponseWriter, r *http.Request) {
 	bedroom, _ := strconv.Atoi(r.FormValue("bedroom"))
 	bathroom, _ := strconv.Atoi(r.FormValue("bathroom"))
 	request := housesdto.HouseRequest{
-		Name:      r.FormValue("name"),
-		CityName:  r.FormValue("city_name"),
-		Address:   r.FormValue("address"),
-		TypeRent:  r.FormValue("type_rent"),
-		Amenities: datatypes.JSON(r.FormValue("amenities")),
-		Price:     price,
-		Bedroom:   bedroom,
-		Bathroom:  bathroom,
+		Name:        r.FormValue("name"),
+		CityName:    r.FormValue("city_name"),
+		Address:     r.FormValue("address"),
+		TypeRent:    r.FormValue("type_rent"),
+		Description: r.FormValue("description"),
+		Area:        r.FormValue("area"),
+		Amenities:   datatypes.JSON(r.FormValue("amenities")),
+		Price:       price,
+		Bedroom:     bedroom,
+		Bathroom:    bathroom,
 	}
 
 	validation := validator.New()
@@ -92,15 +94,17 @@ func (h *handlerHouse) CreateHouse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	house := models.House{
-		Name:      request.Name,
-		CityName:  request.CityName,
-		Address:   request.Address,
-		Price:     request.Price,
-		TypeRent:  request.TypeRent,
-		Amenities: request.Amenities,
-		Bedroom:   request.Bedroom,
-		Bathroom:  request.Bathroom,
-		Image:     filename,
+		Name:        request.Name,
+		CityName:    request.CityName,
+		Address:     request.Address,
+		Price:       request.Price,
+		TypeRent:    request.TypeRent,
+		Amenities:   request.Amenities,
+		Description: request.Description,
+		Area:        request.Area,
+		Bedroom:     request.Bedroom,
+		Bathroom:    request.Bathroom,
+		Image:       filename,
 	}
 
 	house, err = h.HouseRepository.CreateHouse(house)
@@ -155,15 +159,17 @@ func (h *handlerHouse) UpdateHouse(w http.ResponseWriter, r *http.Request) {
 	bedroom, _ := strconv.Atoi(r.FormValue("bedroom"))
 	bathroom, _ := strconv.Atoi(r.FormValue("bathroom"))
 	request := housesdto.HouseRequest{
-		Name:      r.FormValue("name"),
-		CityName:  r.FormValue("city_name"),
-		Address:   r.FormValue("address"),
-		TypeRent:  r.FormValue("type_rent"),
-		Amenities: datatypes.JSON(r.FormValue("amenities")),
-		Price:     price,
-		Bedroom:   bedroom,
-		Bathroom:  bathroom,
-		Image:     filename,
+		Name:        r.FormValue("name"),
+		CityName:    r.FormValue("city_name"),
+		Address:     r.FormValue("address"),
+		TypeRent:    r.FormValue("type_rent"),
+		Description: r.FormValue("description"),
+		Area:        r.FormValue("area"),
+		Amenities:   datatypes.JSON(r.FormValue("amenities")),
+		Price:       price,
+		Bedroom:     bedroom,
+		Bathroom:    bathroom,
+		Image:       filename,
 	}
 
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
@@ -195,6 +201,10 @@ func (h *handlerHouse) UpdateHouse(w http.ResponseWriter, r *http.Request) {
 		house.TypeRent = request.TypeRent
 	}
 
+	if request.Description != "" {
+		house.Description = request.Description
+	}
+
 	if request.Amenities != nil {
 		house.Amenities = request.Amenities
 	}
@@ -205,6 +215,10 @@ func (h *handlerHouse) UpdateHouse(w http.ResponseWriter, r *http.Request) {
 
 	if request.Bathroom != 0 {
 		house.Bathroom = request.Bathroom
+	}
+
+	if request.Area != "" {
+		house.Area = request.Area
 	}
 
 	if request.Image != "" {
@@ -226,15 +240,17 @@ func (h *handlerHouse) UpdateHouse(w http.ResponseWriter, r *http.Request) {
 
 func convertResponseHouse(u models.House) housesdto.HouseResponse {
 	return housesdto.HouseResponse{
-		ID:        u.ID,
-		Name:      u.Name,
-		CityName:  u.CityName,
-		Address:   u.Address,
-		Price:     u.Price,
-		TypeRent:  u.TypeRent,
-		Amenities: u.Amenities,
-		Bedroom:   u.Bedroom,
-		Bathroom:  u.Bathroom,
-		Image:     u.Image,
+		ID:          u.ID,
+		Name:        u.Name,
+		CityName:    u.CityName,
+		Address:     u.Address,
+		Price:       u.Price,
+		TypeRent:    u.TypeRent,
+		Amenities:   u.Amenities,
+		Description: u.Description,
+		Area:        u.Area,
+		Bedroom:     u.Bedroom,
+		Bathroom:    u.Bathroom,
+		Image:       u.Image,
 	}
 }

@@ -9,30 +9,14 @@ import Container from "react-bootstrap/esm/Container";
 import Elipse from "../assets/img/Ellipse 7.png";
 import Elipsee from "../assets/img/Ellipse 8.png";
 import Line from "../assets/img/Line 9.png";
-import NoteImg from "../assets/img/note.png";
-// import Modal from "react-bootstrap/Modal";
+import CodeQr from "../assets/img/qr-code.png";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../context/userContext";
 import { useMutation, useQuery } from "react-query";
 import { API } from "../config/api";
 import Moment from "react-moment";
-// import jwt from "jwt-decode";
-
-// function PayModal(props) {
-//   return (
-//     <Modal {...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
-//       <Modal.Body>
-//         <p>
-//           Pembayaran Anda Akan di Konfirmasi dalam 1 x 24 Jam Untuk melihat pesanan{" "}
-//           <Button onClick={props.onHide} className="btn btn-dark bg-white text-primary fw-bold p-0 m-0 border-0">
-//             Disini
-//           </Button>
-//           Terimakasih
-//         </p>
-//       </Modal.Body>
-//     </Modal>
-//   );
-// }
+import { convert } from "rupiah-format";
+import NavbarWithoutSearch from "../components/NavbarWithoutSearch";
 
 export default function MyBooking(props) {
   const getData = JSON.parse(localStorage.getItem("check_in"));
@@ -44,8 +28,6 @@ export default function MyBooking(props) {
   const { id } = useParams();
 
   const [state, dispatch] = useContext(UserContext);
-
-  console.log(state.user, "ini userrr");
 
   // fetching data house from database
   let { data: house, refetch } = useQuery("detailCache", async () => {
@@ -74,6 +56,8 @@ export default function MyBooking(props) {
         total: house.price,
         status_payment: "Pending",
         attachment: "image.png",
+        created_at: dateTime,
+        updated_at: dateTime,
       });
 
       const tokenBaru = response.data.data.token;
@@ -128,7 +112,7 @@ export default function MyBooking(props) {
 
   return (
     <>
-      <NavbarProject userSignIn={props.userSignIn} setUserSignIn={props.setUserSignIn} />
+      <NavbarWithoutSearch />
       <Container className="myc fmb" style={{ width: "60%", marginTop: "200px" }}>
         <div className="border border-3 p-4 pe-0 pb-0">
           <Row style={{}} className="d-flex jcb">
@@ -191,23 +175,7 @@ export default function MyBooking(props) {
               </div>
             </Col>
             <Col className="d-flex flex-column justify-content-center align-items-center gap-2" md="auto" lg={4}>
-              <img src={NoteImg} alt="" style={{ width: 150 }} />
-              <Button
-                type="submit"
-                //onSubmit={handleChangePhoto}
-                className="position-relative p-0 m-0 bg text-dark bd"
-                variant="outline-primary"
-              >
-                <input
-                  className="d-block position-absolute h-100 w-100"
-                  id="formFile"
-                  type="file"
-                  name="image"
-                  //         onChange={handleChangePhoto}
-                  style={{ cursor: "pointer", opacity: 0 }}
-                />
-                <span className="d-block py-2 px-3">Upload Image</span>
-              </Button>
+              <img src={CodeQr} alt="" style={{ width: 150 }} />
             </Col>
           </Row>
           <Row className="d-flex">
@@ -256,7 +224,7 @@ export default function MyBooking(props) {
                 <p className=" m-0 ps-3 py-2">Total</p>
               </Col>
               <Col className="d-flex align-items-center" lg={2}>
-                <p className="m-0 text-danger fw-bold">: {house?.price}</p>
+                <p className="m-0 text-danger fw-bold">: {convert(house?.price)}</p>
               </Col>
             </Row>
           </Row>

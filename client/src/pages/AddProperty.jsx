@@ -8,19 +8,16 @@ import { useMutation } from "react-query";
 import { API } from "../config/api";
 import { Alert } from "bootstrap";
 import { json, useNavigate } from "react-router-dom";
+import NavbarWithoutSearch from "../components/NavbarWithoutSearch";
 
 function AddProperty() {
   useEffect(() => {
     document.body.style.background = "rgba(196, 196, 196, 0.25)";
   });
 
-  let navigate = useNavigate();
-
-  // const [amenities, setAmenities] = useState([]); //Store all category data
-  // const [amenitiesId, setAmenitiesId] = useState([]); //Save the selected category id
+  const navigate = useNavigate();
   const [preview, setPreview] = useState(null); //For image preview
 
-  // Create variabel for store data with useState here ...
   const [form, setForm] = useState({
     image: "",
     nameProperty: "",
@@ -31,15 +28,12 @@ function AddProperty() {
     amenities: [],
     bedroom: "",
     bathroom: "",
+    area: "",
+    description: "",
   });
+  console.log(form);
 
-  // Handle change data on form
   const handleChange = (e) => {
-    // setForm({
-    //   ...form,
-    //   [e.target.name]: e.target.type === "file" ? e.target.files : e.target.value,
-    // });
-
     const { name, value, type, checked } = e.target;
     if (type === "checkbox") {
       let newAmenities = [...form.amenities];
@@ -56,7 +50,6 @@ function AddProperty() {
     // Create image url for preview
     if (e.target.type === "file") {
       let url = URL.createObjectURL(e.target.files[0]);
-      console.log("ini data blob", url);
       setPreview(url);
     }
   };
@@ -76,9 +69,13 @@ function AddProperty() {
       formData.append("type_rent", form.typeOfRent);
       formData.append("bedroom", form.bedroom);
       formData.append("bathroom", form.bathroom);
+      formData.append("description", form.description);
+      formData.append("area", form.area);
 
       const response = await API.post("/house", formData);
       console.log("berhasil menambahkan product", response);
+
+      navigate(`/home-owner`);
     } catch (err) {
       console.log("gagal upload product", err);
       console.log(form.amenities);
@@ -87,7 +84,7 @@ function AddProperty() {
 
   return (
     <>
-      <NavbarProject />
+      <NavbarWithoutSearch />
       <Container className="w-75 mb-5" style={{ marginTop: "150px" }}>
         <Form onSubmit={(e) => handleSubmit.mutate(e)}>
           {preview && (
@@ -103,10 +100,10 @@ function AddProperty() {
               />
             </div>
           )}
-          <input type="file" id="upload" name="image" hidden onChange={handleChange} />
-          <label for="upload" className="label-file-add-product">
-            Upload file
-          </label>
+          <Form.Group controlId="upload" className="mb-3">
+            <Form.Label className="fw-bold">Upload file</Form.Label>
+            <Form.Control name="image" type="file" className="rs bgad" onChange={handleChange} />
+          </Form.Group>
           <Form.Group className="mb-3" controlId="nameProperty" onChange={handleChange}>
             <Form.Label className="fw-bold">Name Property</Form.Label>
             <Form.Control name="nameProperty" className="bgad" type="text" value={form.nameProperty} />
@@ -158,6 +155,19 @@ function AddProperty() {
               <option value="1">1</option>
               <option value="2">2</option>
             </Form.Select>
+          </Form.Group>
+          <Form.Group className="mb-3 " controlId="area">
+            <Form.Label className="fw-bold">Area</Form.Label>
+            <Form.Select onChange={handleChange} className="bgad" name="area" aria-label="Default select example">
+              <option></option>
+              <option value="1500 ft">1500 ft</option>
+              <option value="1800 ft">1800 ft</option>
+              <option value="2000 ft">2000 ft</option>
+            </Form.Select>
+          </Form.Group>
+          <Form.Group className="mb-3 " controlId="description">
+            <Form.Label className="fw-bold">Description</Form.Label>
+            <Form.Control onChange={handleChange} className="rs bgad" as="textarea" name="description" style={{ height: "80px" }} />
           </Form.Group>
           <div className="d-flex justify-content-center mt-5">
             <Button style={{ padding: "8px 100px" }} variant="primary" type="submit">

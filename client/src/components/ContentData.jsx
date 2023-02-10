@@ -6,6 +6,8 @@ import Card from "react-bootstrap/Card";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { API } from "../config/api";
+import { convert } from "rupiah-format";
+import jwt_decode from "jwt-decode";
 
 export default function ContentData() {
   const navigate = useNavigate();
@@ -14,7 +16,6 @@ export default function ContentData() {
     return response.data.data;
   });
 
-  
   return (
     <>
       <Col className="d-flex p-0" style={{ marginLeft: "380px" }}>
@@ -23,8 +24,6 @@ export default function ContentData() {
             {houses?.map((value, index) => {
               return (
                 <Card key={index} className="wc p-2 mb-1  d-flex selector-for-some-widget overflow-hidden gap-3">
-                  {/* <Link to={"/detail-property/" + index + 1}> */}
-                  {/* <span className="position-absolute px-3 py-1 bg-white rounded-2 fs10 mt-2 ms-2">{value.amenities}</span> */}
                   <div className="position-absolute mt-3 ms-1 d-flex gap-2">
                     {value.amenities.map((amenity, idk) => (
                       <span key={idk} className="px-3 py-1 bg-white rounded-2 fs10">
@@ -37,10 +36,10 @@ export default function ContentData() {
                   {/* </Link> */}
                   <Card.Body className=" bs m-0 p-0 d-flex flex-column gap-1">
                     <Card.Title className="fs16 fw-bold m-0 p-0">
-                      {value.price} / {value.type_rent}
+                      {convert(value.price)} / {value.type_rent}
                     </Card.Title>
                     <Card.Text className="fs10 m-0 p-0 fw-semibold">{value.bedroom + " beds, " + value.bathroom + " Baths, "}</Card.Text>
-                    <Card.Text className="fs10 m-0 p-0 lh-lg text-secondary fw-semibold">{value.address}</Card.Text>
+                    <Card.Text className="fs10 m-0 p-0 lh-sm text-secondary fw-semibold">{value.address}</Card.Text>
                   </Card.Body>
                 </Card>
               );

@@ -18,8 +18,6 @@ import { UserContext } from "../context/userContext";
 function DropdwonLogin(props) {
   const [state, dispatch] = useContext(UserContext);
 
-  console.log(state)
-
   let navigate = useNavigate();
 
   const logout = () => {
@@ -49,7 +47,7 @@ function DropdwonLogin(props) {
             <>
               <Dropdown.Item
                 onClick={() => {
-                  navigate(`/my-booking/`);
+                  navigate(`/my-booking`);
                 }}
                 className="dropDownNav"
               >
@@ -80,7 +78,7 @@ function DropdwonLogin(props) {
               </Dropdown.Item>
               <Dropdown.Item
                 onClick={() => {
-                  navigate(`/home-owner`);
+                  navigate(`/history-owner`);
                 }}
                 className="dropDownNav"
               >

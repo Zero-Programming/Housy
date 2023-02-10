@@ -13,8 +13,10 @@ import SignUp from "../components/SignUp";
 import MyBookingModal from "../components/MyBookingModal";
 import { useQuery } from "react-query";
 import { API } from "../config/api";
+import { convert } from "rupiah-format";
+import NavbarWithoutSearch from "../components/NavbarWithoutSearch";
 
-export default function DetailProperty(props) {
+export default function DetailProperty() {
   useEffect(() => {
     document.body.style.background = "rgba(196, 196, 196, 0.25)";
   });
@@ -34,15 +36,14 @@ export default function DetailProperty(props) {
   const { id } = useParams();
 
   let { data: detail } = useQuery("detailCache", async () => {
-    const response = await API.get("/house/" + id)
-    console.log(response);
+    const response = await API.get("/house/" + id);
     return response.data.data;
   });
 
   console.log(detail);
   return (
     <>
-      <NavbarProject userSignIn={props.userSignIn} setUserSignIn={props.setUserSignIn} />
+      <NavbarWithoutSearch />
       <Container style={{ margin: "200px" }} className="mx-auto px-5 mt-5 pt-5 d-flex flex-column">
         <Row>
           <Col className="mt-5">
@@ -67,7 +68,7 @@ export default function DetailProperty(props) {
             </div>
             <div className="d-flex justify-content-between mb-5">
               <Col sm={4}>
-                <h3 className="fw-bold">{detail?.price + " / " + detail?.type_rent}</h3>
+                <h3 className="fw-bold">{convert(detail?.price) + " / " + detail?.type_rent}</h3>
                 <p>Jl. Elang IV Perum Permata Bintaro Residence, Pondok Aren,Tangerang Selatan</p>
               </Col>
               <Col className="d-flex" sm={3}>
@@ -109,12 +110,13 @@ export default function DetailProperty(props) {
               )}
 
               <MyBookingModal detail={detail && detail} show={modalShowBooking} onHide={() => setModalShowBooking(false)} />
-              <SignIn openSignup={handleSignup} userSignIn={props.userSignIn} setUserSignIn={props.setUserSignIn} show={modalSignIn} onHide={() => setModalSignIn(false)} />
-              <SignUp openSignin={handleSignin} show={modalSignUp} onHide={() => setModalSignUp(false)} />
             </div>
           </Col>
         </Row>
       </Container>
+
+      <SignIn openSignup={handleSignup} show={modalSignIn} onHide={() => setModalSignIn(false)} />
+      <SignUp openSignin={handleSignin} show={modalSignUp} onHide={() => setModalSignUp(false)} />
     </>
   );
 }
