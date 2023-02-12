@@ -16,6 +16,9 @@ import { UserContext } from "../context/userContext";
 import NavbarWithoutSearch from "../components/NavbarWithoutSearch";
 import { useQuery, useMutation } from "react-query";
 import { API } from "../config/api";
+import ChangeImageModal from "../components/ChangeImageModal";
+import Modal from "react-bootstrap/Modal";
+import { Form } from "react-router-dom";
 
 export default function Profile(props) {
   useEffect(() => {
@@ -23,40 +26,40 @@ export default function Profile(props) {
   });
 
   const [state, dispatch] = useContext(UserContext);
-
-  console.log(state.user.id);
-
   const id = state.user.id;
+  // const [form, setForm] = useState({
+  //   image: "",
+  // });
 
   let { data: userId } = useQuery("userCache", async () => {
-    const response = await API.get("/user/"+id);
+    const response = await API.get("/user/" + id);
     return response.data.data;
   });
 
-  console.log(userId)
-
-  const [user, setUser] = useState([]); //Store all category data
-  const [preview, setPreview] = useState(null); //For image preview
-
-  // const handleFileUpload = (event) => {
-  //   setFile(event.target.files[0]);
-  // };
-
-  // const handleSubmit = async event => {
-  //   event.preventDefault();
-
-  //   const formData = new FormData();
-  //   formData.append("file", file);
-
-  //   const res = await , {
-  //     method: "POST",
-  //     body: formData
+  // const handleChange = (e) => {
+  //   setForm({
+  //     ...form,
+  //     [e.target.name]: e.target.type === "file" ? e.target.files : e.target.value,
   //   });
-
-  //   const data = await res.json();
-  //   console.log(data);
   // };
 
+  // const handleSubmit = useMutation(async (e) => {
+  //   try {
+  //     e.preventDefault();
+  //     // Store data with FormData as object
+  //     const formData = new FormData();
+  //     formData.set("image", form.image);
+
+  //     // Insert product data
+  //     const response = await API.patch("/change-password", formData);
+  //     console.log(response.data);
+
+  //     alert("successfully change your image!");
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // });
+  const [modalShowImage, setModalShowImage] = React.useState(false);
 
   const [modalShow, setModalShow] = React.useState(false);
 
@@ -122,26 +125,15 @@ export default function Profile(props) {
               </div>
             </div>
           </Col>
-          <Col className="p-0 d-flex flex-column gap-3" sm={4}>
-            <div>
-              {preview && (
-                <div>
-                  <img
-                    src={preview}
-                    style={{
-                      maxWidth: "100%",
-                      maxHeight: "100%",
-                      objectFit: "cover",
-                    }}
-                    alt={preview}
-                  />
-                </div>
-              )}
+          <Col className=" p-0 d-flex flex-column gap-3" sm={4}>
+            <div className="">
+              <img className="shadow rounded " style={{ width: "310px", height: "430px", objectFit: "cover" }} src={userId?.image != "http://localhost:8080/uploads/" ? userId?.image : imgp3} alt="" />
             </div>
             <div>
-              <Button type="submit" className="w-100 text-dark bd bg">
+              <Button onClick={() => setModalShowImage(true)} className="w-100">
                 Change Foto Profile
               </Button>
+              <ChangeImageModal show={modalShowImage} onHide={() => setModalShowImage(false)} />
             </div>
           </Col>
         </Row>

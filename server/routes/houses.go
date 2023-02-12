@@ -18,4 +18,5 @@ func HouseRoutes(r *mux.Router) {
 	r.HandleFunc("/house", (middleware.UploadFile(h.CreateHouse))).Methods("POST")
 	r.HandleFunc("/house/{id}", h.DeleteHouse).Methods("DELETE")
 	r.HandleFunc("/house/{id}", middleware.Auth(middleware.UploadFile(h.UpdateHouse))).Methods("PATCH")
+
 }

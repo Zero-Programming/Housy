@@ -7,9 +7,21 @@ import ContentData from "../components/ContentData";
 import NavbarProject from "../components/NavbarProject";
 
 export default function Home(props) {
+  // const [filters, setFilters] = useState({
+  //   name: "",
+  //   city_name: "",
+  //   address: "",
+  //   price: 0,
+  //   type_rent: "",
+  //   amenities: [],
+  //   bedroom: 0,
+  //   bathroom: 0,
+  //   image: "",
+  // });
+
   return (
     <>
-      <NavbarProject/>
+      <NavbarProject />
       <Row className="po">
         <Filter />
         <ContentData />

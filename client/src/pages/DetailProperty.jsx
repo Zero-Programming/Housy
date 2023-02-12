@@ -69,7 +69,7 @@ export default function DetailProperty() {
             <div className="d-flex justify-content-between mb-5">
               <Col sm={4}>
                 <h3 className="fw-bold">{convert(detail?.price) + " / " + detail?.type_rent}</h3>
-                <p>Jl. Elang IV Perum Permata Bintaro Residence, Pondok Aren,Tangerang Selatan</p>
+                <p>{detail?.address}</p>
               </Col>
               <Col className="d-flex" sm={3}>
                 <Col>
@@ -89,7 +89,7 @@ export default function DetailProperty() {
                 <Col>
                   <p className="p-0 m-0">Area</p>
                   <div>
-                    <span>1800pl</span>
+                    <span>{detail?.area}</span>
                   </div>
                 </Col>
               </Col>

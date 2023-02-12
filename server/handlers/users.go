@@ -2,16 +2,23 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	authdto "housy/dto/auth"
 	dto "housy/dto/result"
 	usersdto "housy/dto/users"
 	"housy/models"
+	"housy/pkg/bcrypt"
+
+	// "housy/pkg/bcrypt"
 	"housy/repositories"
 	"net/http"
 	"strconv"
 
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
 )
+
+var path_file1 = "http://localhost:8080/uploads/"
 
 type handlerUser struct {
 	UserRepository repositories.UserRepository
@@ -28,6 +35,10 @@ func (h *handlerUser) FindUsers(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(err.Error())
+	}
+
+	for i, p := range users {
+		users[i].Image = path_file1 + p.Image
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -47,6 +58,8 @@ func (h *handlerUser) GetUser(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 		return
 	}
+
+	user.Image = path_file1 + user.Image
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: convertResponse(user)}
@@ -97,12 +110,26 @@ func convertResponse(u models.User) usersdto.UserResponse {
 func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	request := new(authdto.SignUpRequest)
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
-		json.NewEncoder(w).Encode(response)
-		return
+	dataContex := r.Context().Value("dataFile") // add this code
+	filename := dataContex.(string)             // add this code
+
+	// request := new(usersdto.UserRequest)
+	// if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// 	response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
+	// 	json.NewEncoder(w).Encode(response)
+	// 	return
+	// }
+
+	request := usersdto.UserRequest{
+		Fullname:   r.FormValue("fullname"),
+		Email:      r.FormValue("email"),
+		Username:   r.FormValue("username"),
+		ListAsRole: r.FormValue("listAsRole"),
+		Gender:     r.FormValue("gender"),
+		Phone:      r.FormValue("phone"),
+		Address:    (r.FormValue("address")),
+		Image:      filename,
 	}
 
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
@@ -126,10 +153,6 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		user.Username = request.Username
 	}
 
-	if request.Password != "" {
-		user.Password = request.Password
-	}
-
 	if request.ListAsRole != "" {
 		user.ListAsRole = request.ListAsRole
 	}
@@ -146,9 +169,9 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		user.Phone = request.Phone
 	}
 
-	// if request. != "" {
-	// 	user.Image = request.Profile.Image
-	// }
+	if request.Image != "" {
+		user.Image = request.Image
+	}
 
 	data, err := h.UserRepository.UpdateUser(user)
 	if err != nil {
@@ -161,4 +184,99 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: data}
 	json.NewEncoder(w).Encode(response)
+}
+
+func (h *handlerUser) ChangePassword(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	request := new(authdto.ChangePasswordRequest)
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	fmt.Print("masuk sini ga")
+
+	userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
+	userId := int(userInfo["id"].(float64))
+
+	fmt.Print("masuk sini ga 222")
+
+	user, err := h.UserRepository.GetUser(int(userId))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	isValid := bcrypt.CheckPasswordHash(request.OldPassword, user.Password)
+	if !isValid {
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: "your old password does'nt match!"}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	newPassword, err := bcrypt.HashingPassword(request.NewPassword)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+	}
+
+	user.Password = newPassword
+
+	data, err := h.UserRepository.ChangePassword(user)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	response := dto.SuccessResult{Code: http.StatusOK, Data: data}
+	json.NewEncoder(w).Encode(response)
+}
+
+func (h *handlerUser) ChangeImage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	dataContex := r.Context().Value("dataFile") // add this code
+	filename := dataContex.(string)             // add this code
+
+	request := usersdto.ChangeImageRequest{
+		Image: filename,
+	}
+
+	userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
+	userId := int(userInfo["id"].(float64))
+
+	user, err := h.UserRepository.GetUser(int(userId))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if request.Image != "" {
+		user.Image = request.Image
+	}
+
+	data, err := h.UserRepository.ChangeImage(user)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	response := dto.SuccessResult{Code: http.StatusOK, Data: data}
+	json.NewEncoder(w).Encode(response)
+
 }

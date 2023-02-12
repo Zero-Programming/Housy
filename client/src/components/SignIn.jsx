@@ -35,6 +35,14 @@ export default function SignIn(props) {
         type: "LOGIN_SUCCESS",
         payload: response.data.data,
       });
+
+      // Status check
+      if (response.data.data.listAsRole === "Owner") {
+        navigate("/home-owner");
+      } else {
+        navigate("/");
+      }
+
       alert("Login succses!");
       props.onHide();
     } catch (error) {

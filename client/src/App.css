@@ -73,3 +73,12 @@
 .bgad {
   background-color: #B1B1B1;
 }
+
+.profile {
+  height: 345px;
+  width: 280px;
+  left: 808px;
+  top: 212px;
+  border-radius: 0px;
+  object-fit: cover;
+}

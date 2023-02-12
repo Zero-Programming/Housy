@@ -160,7 +160,7 @@ func (h *handlerAuth) SignIn(w http.ResponseWriter, r *http.Request) {
 		Phone:      user.Phone,
 		Address:    user.Address,
 		// Image:      user.Image,
-		Token:      token,
+		Token: token,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

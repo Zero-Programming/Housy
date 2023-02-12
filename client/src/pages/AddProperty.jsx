@@ -1,13 +1,11 @@
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import NavbarProject from "../components/NavbarProject";
 import Container from "react-bootstrap/esm/Container";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useMutation } from "react-query";
 import { API } from "../config/api";
-import { Alert } from "bootstrap";
-import { json, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import NavbarWithoutSearch from "../components/NavbarWithoutSearch";
 
 function AddProperty() {
@@ -130,12 +128,15 @@ function AddProperty() {
               <option></option>
               <option value="Jakarta">Jakarta</option>
               <option value="Bandung">Bandung</option>
+              <option value="Surabaya">Surabaya</option>
+              <option value="Palmebang">Palmebang</option>
             </Form.Select>
           </Form.Group>
           <Form.Group className="mb-3" controlId="typeOfRent">
             <Form.Label className="fw-bold">Type of Rent</Form.Label>
             <Form.Select onChange={handleChange} className="bgad" name="typeOfRent" aria-label="Default select example">
               <option></option>
+              <option value="Day">Day</option>
               <option value="Year">Year</option>
               <option value="Month">Month</option>
             </Form.Select>
@@ -144,16 +145,22 @@ function AddProperty() {
             <Form.Label className="fw-bold">Bedroom</Form.Label>
             <Form.Select onChange={handleChange} className="bgad" name="bedroom" aria-label="Default select example">
               <option></option>
-              <option value="3">3</option>
+              <option value="1">1</option>
               <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
             </Form.Select>
           </Form.Group>
           <Form.Group className="mb-3 " controlId="bathroom">
             <Form.Label className="fw-bold">Bathroom</Form.Label>
-            <Form.Select onChange={handleChange} className="bgad" name="bathroom" aria-label="Default select example">
+            <Form.Select onChange={handleChange} className="bgad w-100" name="bathroom" aria-label="Default select example">
               <option></option>
               <option value="1">1</option>
               <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
             </Form.Select>
           </Form.Group>
           <Form.Group className="mb-3 " controlId="area">

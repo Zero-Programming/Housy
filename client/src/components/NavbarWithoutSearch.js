@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
@@ -12,6 +12,9 @@ import "../styles/style.css";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import DropdownLogin from "./Dropdown";
+import { useQuery } from "react-query";
+import { API } from "../config/api";
+import { UserContext } from "../context/userContext";
 
 function NavbarWithoutSearch() {
   const [modalSignIn, setModalSignIn] = React.useState(false);
@@ -25,10 +28,19 @@ function NavbarWithoutSearch() {
     setModalSignIn(true);
   };
 
+  const [state, dispatch] = useContext(UserContext);
+
+  const id = state.user.id;
+
+  let { data: userId } = useQuery("userCache", async () => {
+    const response = await API.get("/user/" + id);
+    return response.data.data;
+  });
+
   return (
     <Navbar bg="white" expand="lg" className="fixed-top px-4">
       <Container fluid>
-        <Navbar.Brand href="/" style={{ marginRight: "31%" }}>
+        <Navbar.Brand href={userId?.listAsRole == "Owner" ? "/home-owner" : "/"} style={{ marginRight: "31%" }}>
           <img src={logo} alt="" width={120} />
         </Navbar.Brand>
 

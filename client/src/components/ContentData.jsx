@@ -7,7 +7,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { API } from "../config/api";
 import { convert } from "rupiah-format";
-import jwt_decode from "jwt-decode";
 
 export default function ContentData() {
   const navigate = useNavigate();
@@ -38,7 +37,7 @@ export default function ContentData() {
                     <Card.Title className="fs16 fw-bold m-0 p-0">
                       {convert(value.price)} / {value.type_rent}
                     </Card.Title>
-                    <Card.Text className="fs10 m-0 p-0 fw-semibold">{value.bedroom + " beds, " + value.bathroom + " Baths, "}</Card.Text>
+                    <Card.Text className="fs10 m-0 p-0 fw-semibold">{value.bedroom + " beds, " + value.bathroom + " Baths, " + value.area}</Card.Text>
                     <Card.Text className="fs10 m-0 p-0 lh-sm text-secondary fw-semibold">{value.address}</Card.Text>
                   </Card.Body>
                 </Card>
