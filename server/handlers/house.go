@@ -20,7 +20,7 @@ import (
 	"gorm.io/datatypes"
 )
 
-var path_file = os.Getenv("PATH_FILE")
+// var path_file = os.Getenv("PATH_FILE")
 
 type handlerHouse struct {
 	HouseRepository repositories.HouseRepository
@@ -43,10 +43,10 @@ func (h *handlerHouse) FindHouses(w http.ResponseWriter, r *http.Request) {
 	// 	houses[i].Image = path_file + p.Image
 	// }
 
-	for i, p := range houses {
-		imagePath := os.Getenv("PATH_FILE") + p.Image
-		houses[i].Image = imagePath
-	}
+	// for i, p := range houses {
+	// 	imagePath := os.Getenv("PATH_FILE") + p.Image
+	// 	houses[i].Image = imagePath
+	// }
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: houses}
@@ -66,9 +66,9 @@ func (h *handlerHouse) FindHousesFilter(w http.ResponseWriter, r *http.Request) 
 		json.NewEncoder(w).Encode(err.Error())
 	}
 
-	for i, p := range houses {
-		houses[i].Image = path_file + p.Image
-	}
+	// for i, p := range houses {
+	// 	houses[i].Image = path_file + p.Image
+	// }
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: houses}

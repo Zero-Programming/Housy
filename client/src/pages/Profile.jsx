@@ -127,7 +127,7 @@ export default function Profile(props) {
           </Col>
           <Col className=" p-0 d-flex flex-column gap-3" sm={4}>
             <div className="">
-              <img className="shadow rounded " style={{ width: "310px", height: "430px", objectFit: "cover" }} src={userId?.image != "http://localhost:8080/uploads/" ? userId?.image : imgp3} alt="" />
+              <img className="shadow rounded " style={{ width: "310px", height: "430px", objectFit: "cover" }} src={userId?.image != "" ? userId?.image : imgp3} alt="" />
             </div>
             <div>
               <Button onClick={() => setModalShowImage(true)} className="w-100">

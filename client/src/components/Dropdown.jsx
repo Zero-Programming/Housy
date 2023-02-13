@@ -42,7 +42,7 @@ function DropdwonLogin(props) {
     <>
       <Dropdown align="end" style={{ color: "white", backgroundColor: "white", border: "white" }} id="dropdown-basic-button" title="Dropdown button">
         <DropdownToggle className="p-0 rounded-circle" style={{ width: "50px", height: "50px" }} variant="white">
-          <Image roundedCircle className="si" src={userId?.image != "http://localhost:8080/uploads/" ? userId?.image : imgp3} />
+          <Image roundedCircle className="si" src={userId?.image != "" ? userId?.image : imgp3} />
         </DropdownToggle>
         <DropdownMenu>
           <Dropdown.Item
