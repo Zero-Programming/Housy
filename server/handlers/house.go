@@ -42,6 +42,28 @@ func (h *handlerHouse) FindHouses(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+func (h *handlerHouse) FindHousesFilter(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	querParams := r.URL.Query()
+
+	price, _ := strconv.Atoi(querParams.Get("price"))
+
+	houses, err := h.HouseRepository.FindHousesFilter(price)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(err.Error())
+	}
+
+	for i, p := range houses {
+		houses[i].Image = path_file + p.Image
+	}
+
+	w.WriteHeader(http.StatusOK)
+	response := dto.SuccessResult{Code: http.StatusOK, Data: houses}
+	json.NewEncoder(w).Encode(response)
+}
+
 func (h *handlerHouse) GetHouse(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 

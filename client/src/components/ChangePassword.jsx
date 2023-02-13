@@ -5,8 +5,10 @@ import Form from "react-bootstrap/Form";
 import { UserContext } from "../context/userContext";
 import { API } from "../config/api";
 import { useMutation, useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
 
 export default function ChangePassword(props) {
+  const navigate = useNavigate()
   const [state, dispatch] = useContext(UserContext);
   const id = state.user.id;
 
@@ -18,7 +20,13 @@ export default function ChangePassword(props) {
   });
 
   let { data: userId, refetch } = useQuery("userCache", async () => {
-    const response = await API.get("/user/" + id);
+    const config = {
+      method: "GET",
+      headers: {
+        Authorization: "Basic " + localStorage.token,
+      },
+    };
+    const response = await API.get("/user/" + id, config);
     return response.data.data;
   });
 
@@ -45,6 +53,10 @@ export default function ChangePassword(props) {
       }
 
       alert("successfuly change password!");
+      dispatch({
+        type: "LOGOUT",
+      });
+      navigate("/");
 
       // navigate("/product-admin");
     } catch (error) {

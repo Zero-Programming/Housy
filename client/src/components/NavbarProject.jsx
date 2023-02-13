@@ -24,8 +24,9 @@ function NavbarProject(props) {
   const handleSignin = () => {
     setModalSignIn(true);
   };
-
-
+  const handleChange = (e) => {
+    props.setFilter({ ...props.filter, [e.target.name]: e.target.value });
+  };
 
   return (
     <Navbar bg="white" expand="lg" className="fixed-top px-4">
@@ -36,12 +37,14 @@ function NavbarProject(props) {
 
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll" className="justify-content-between">
-          <InputGroup style={{ width: "300px" }}>
-            <Form.Control type="search" placeholder="Search" className="bg" aria-label="Search" />
-            <Button className="bg" variant="outline-secondary">
-              <BsSearch />
-            </Button>
-          </InputGroup>
+          <Form onSubmit={props.handleOnSubmit}>
+            <InputGroup style={{ width: "300px" }}>
+              <Form.Control type="search" placeholder="Search Name House" onChange={handleChange} className="bg" name="name" aria-label="Search" />
+              <Button type="submit" className="bg" variant="outline-secondary">
+                <BsSearch />
+              </Button>
+            </InputGroup>
+          </Form>
 
           <Nav style={{ maxHeight: "100px" }} className="my-2 my-lg-0 gap-3" navbarScroll>
             {!localStorage.getItem("token") ? (

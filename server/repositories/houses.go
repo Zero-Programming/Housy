@@ -8,6 +8,7 @@ import (
 
 type HouseRepository interface {
 	FindHouses() ([]models.House, error)
+	FindHousesFilter(price int) ([]models.House, error)
 	GetHouse(ID int) (models.House, error)
 	CreateHouse(house models.House) (models.House, error)
 	DeleteHouse(house models.House) (models.House, error)
@@ -16,6 +17,17 @@ type HouseRepository interface {
 
 func RepositoryHouse(db *gorm.DB) *repository {
 	return &repository{db}
+}
+
+func (r *repository) FindHousesFilter(price int) ([]models.House, error) {
+	var houses []models.House
+	var err error
+	if price != 0 {
+		err = r.db.Where("price < ?", price).Find(&houses).Error
+	} else {
+		err = r.db.Find(&houses).Error
+	}
+	return houses, err
 }
 
 func (r *repository) FindHouses() ([]models.House, error) {

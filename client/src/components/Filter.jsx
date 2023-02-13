@@ -15,104 +15,46 @@ import { API } from "../config/api";
 
 // style={{ widht: "30rem", paddingTop: "100px", zIndex: "10" }}
 
-export default function Filter() {
-
-  // let { data: houses } = useQuery("housesCache", async () => {
-  //   const response = await API.get("/houses");
-  //   return response.data.data;
-  // });
-
-  // const [filters, setFilters] = useState({
-  //   name: "",
-  //   city_name: "",
-  //   address: "",
-  //   price: 0,
-  //   type_rent: "",
-  //   amenities: [],
-  //   bedroom: 0,
-  //   bathroom: 0,
-  //   image: "",
-  // });
-
-  // const handleChange = (event) => {
-  //   setFilters({
-  //     ...filters,
-  //     [event.target.name]: event.target.value,
-  //   });
-  // };
-
-  // const handleCheckbox = (event) => {
-  //   const newAmenities = [...filters.amenities];
-  //   if (event.target.checked) {
-  //     newAmenities.push(event.target.value);
-  //   } else {
-  //     const index = newAmenities.indexOf(event.target.value);
-  //     newAmenities.splice(index, 1);
-  //   }
-  //   setFilters({
-  //     ...filters,
-  //     amenities: newAmenities,
-  //   });
-  // };
-
-  // const filteredData = houses.filter((data) => {
-  //   if (filters.name && !data.name.toLowerCase().includes(filters.name.toLowerCase())) {
-  //     return false;
-  //   }
-  //   if (filters.city_name && data.city_name.toLowerCase() !== filters.city_name.toLowerCase()) {
-  //     return false;
-  //   }
-  //   if (filters.address && !data.address.toLowerCase().includes(filters.address.toLowerCase())) {
-	// 	return false;
-  //   }
-  //   if (filters.price && data.price > filters.price) {
-  //     return false;
-  //   }
-  //   if (filters.type_rent && data.type_rent.toLowerCase() !== filters.type_rent.toLowerCase()) {
-  //     return false;
-  //   }
-  //   if (filters.amenities.length > 0) {
-  //     let flag = false;
-  //     filters.amenities.forEach((amenity) => {
-  //       if (data.amenities.includes(amenity)) {
-  //         flag = true;
-  //       }
-  //     });
-  //     if (!flag) {
-  //       return false;
-  //     }
-  //   }
-  //   if (filters.bedroom && data.bedroom < filters.bedroom) {
-  //     return false;
-  //   }
-  //   if (filters.bathroom && data.bathroom < filters.bathroom) {
-  //     return false;
-  //   }
-  //   return true;
-  // });
-
-
-  
-
+export default function Filter(props) {
+  const handleChange = (e) => {
+    if (e.target.type === "checkbox") {
+      if (e.target.checked) {
+        props.setFilter({
+          ...props.filter,
+          amenities: [...props.filter.amenities, e.target.name],
+        });
+      } else {
+        props.setFilter({
+          ...props.filter,
+          amenities: props.filter.amenities.filter((amenity) => amenity !== e.target.name),
+        });
+      }
+    } else if (e.target.type === "radio") {
+      props.setFilter({ ...props.filter, [e.target.name]: e.target.value });
+    } else {
+      props.setFilter({ ...props.filter, [e.target.name]: e.target.value });
+    }
+  };
 
   return (
     <Col className="fixed-top bg-white ps-4" sm={3} style={{ height: "100vh", zIndex: "10", overflow: "auto", padding: "0", paddingTop: "90px" }}>
-      <Form className=" d-flex flex-column gap-3 me-4 px-3" action="">
-        <div className="d-flex flex-column gap-3">
+      <Form onSubmit={props.handleOnSubmit} className=" d-flex flex-column gap-3 me-4 px-3" action="">
+        <Form.Group className="d-flex flex-column gap-3">
           <Form.Label className="fw-bold m-0 fs24">Type Of Rent</Form.Label>
-          <ToggleButtonGroup type="radio" name="typeOfRent" className="d-flex gap-3">
-            <ToggleButton variant="outline-primary" className="fw-semibold text-dark bd rounded-2 bg w-100" id="typeOfRent-1" value={1}>
+          <ToggleButtonGroup type="radio" name="type_rent" className="d-flex gap-3">
+            <ToggleButton variant="outline-primary" name="type_rent" className="fw-semibold text-dark bd rounded-2 bg w-100" id="Day" value="Day" onChange={handleChange}>
               Day
             </ToggleButton>
-            <ToggleButton variant="outline-primary" className="fw-semibold text-dark bd rounded-2 bg w-100" id="typeOfRent-2" value={2}>
+            <ToggleButton variant="outline-primary" name="type_rent" className="fw-semibold text-dark bd rounded-2 bg w-100" id="Month" value="Month" onChange={handleChange}>
               Month
             </ToggleButton>
-            <ToggleButton variant="outline-primary" className="fw-semibold text-dark bd rounded-2 bg w-100" id="typeOfRent-3" value={3}>
+            <ToggleButton variant="outline-primary" name="type_rent" className="fw-semibold text-dark bd rounded-2 bg w-100" id="Year" value="Year" onChange={handleChange}>
               Year
             </ToggleButton>
           </ToggleButtonGroup>
-        </div>
-        <div className="d-flex flex-column gap-3">
+        </Form.Group>
+
+        <Form.Group className="d-flex flex-column gap-3">
           <Form.Label className="fw-bold m-0 fs24">Date</Form.Label>
           <InputGroup className="">
             <InputGroup.Text id="basic-addon1">
@@ -120,25 +62,26 @@ export default function Filter() {
             </InputGroup.Text>
             <Form.Control className="bg" placeholder="Date" type="date" aria-label="Username" aria-describedby="basic-addon1" />
           </InputGroup>
-        </div>
+        </Form.Group>
+
         <div className="d-flex flex-column gap-2">
           <Form.Label className="fw-bold m-0 fs24">Property Room</Form.Label>
           <div>
-            <Form.Label className="text-secondary m-0 fs14 pb-2">badroom</Form.Label>
-            <ToggleButtonGroup type="radio" name="badroom" className="d-flex gap-3">
-              <ToggleButton variant="outline-primary" className="fw-semibold text-dark bd rounded-2 bg w-100" id="badroom-1" value={1}>
+            <Form.Label className="text-secondary m-0 fs14 pb-2">bedroom</Form.Label>
+            <ToggleButtonGroup type="radio" name="bedroom" className="d-flex gap-3">
+              <ToggleButton variant="outline-primary" name="bedroom" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bedroom-1" value="1" onChange={handleChange}>
                 1
               </ToggleButton>
-              <ToggleButton variant="outline-primary" className="fw-semibold text-dark bd rounded-2 bg w-100" id="badroom-2" value={2}>
+              <ToggleButton variant="outline-primary" name="bedroom" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bedroom-2" value="2" onChange={handleChange}>
                 2
               </ToggleButton>
-              <ToggleButton variant="outline-primary" className="fw-semibold text-dark bd rounded-2 bg w-100" id="badroom-3" value={3}>
+              <ToggleButton variant="outline-primary" name="bedroom" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bedroom-3" value="3" onChange={handleChange}>
                 3
               </ToggleButton>
-              <ToggleButton variant="outline-primary" className="fw-semibold text-dark bd rounded-2 bg w-100" id="badroom-4" value={4}>
+              <ToggleButton variant="outline-primary" name="bedroom" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bedroom-4" value="4" onChange={handleChange}>
                 4
               </ToggleButton>
-              <ToggleButton variant="outline-primary" className="fw-semibold text-dark bd rounded-2 bg w-100" id="badroom-5" value={5}>
+              <ToggleButton variant="outline-primary" name="bedroom" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bedroom-5" value="5" onChange={handleChange}>
                 5+
               </ToggleButton>
             </ToggleButtonGroup>
@@ -146,19 +89,19 @@ export default function Filter() {
           <div>
             <Form.Label className="text-secondary m-0 fs14 pb-2">bathroom</Form.Label>
             <ToggleButtonGroup type="radio" name="bathroom" className="d-flex gap-3">
-              <ToggleButton variant="outline-primary" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bathroom-1" value={1}>
+              <ToggleButton variant="outline-primary" name="bathroom" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bathroom-1" value={1} onChange={handleChange}>
                 1
               </ToggleButton>
-              <ToggleButton variant="outline-primary" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bathroom-2" value={2}>
+              <ToggleButton variant="outline-primary" name="bathroom" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bathroom-2" value={2} onChange={handleChange}>
                 2
               </ToggleButton>
-              <ToggleButton variant="outline-primary" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bathroom-3" value={3}>
+              <ToggleButton variant="outline-primary" name="bathroom" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bathroom-3" value={3} onChange={handleChange}>
                 3
               </ToggleButton>
-              <ToggleButton variant="outline-primary" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bathroom-4" value={4}>
+              <ToggleButton variant="outline-primary" name="bathroom" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bathroom-4" value={4} onChange={handleChange}>
                 4
               </ToggleButton>
-              <ToggleButton variant="outline-primary" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bathroom-5" value={5}>
+              <ToggleButton variant="outline-primary" name="bathroom" className="fw-semibold text-dark bd rounded-2 bg w-100" id="bathroom-5" value={5} onChange={handleChange}>
                 5+
               </ToggleButton>
             </ToggleButtonGroup>
@@ -170,19 +113,22 @@ export default function Filter() {
             <label className="text-secondary" htmlFor="">
               Furnished
             </label>
-            <Form.Check aria-label="option 1" />
+            <Form.Check aria-label="option 1" name="Furnished" onChange={handleChange} />
+            {/* <input type="checkbox"  /> */}
           </div>
           <div className="d-flex justify-content-between">
             <label className="text-secondary" htmlFor="">
               Pet Allowed
             </label>
-            <Form.Check aria-label="option 1" />
+            <Form.Check aria-label="option 1" name="Pet Allowed" onChange={handleChange} />
+            {/* <input type="checkbox" /> */}
           </div>
           <div className="d-flex justify-content-between">
             <label className="text-secondary" htmlFor="">
               Shared Accomodation
             </label>
-            <Form.Check aria-label="option 1" />
+            <Form.Check aria-label="option 1" name="Shared Accomodation" onChange={handleChange} />
+            {/* <input type="checkbox"  /> */}
           </div>
         </div>
         <div className="d-flex flex-column gap-3">
@@ -192,12 +138,12 @@ export default function Filter() {
               Less than IDR.
             </Form.Label>
             <Col>
-              <Form.Control type="text" placeholder="" className="bg" />
+              <Form.Control name="price" onChange={handleChange} type="text" placeholder="" className="bg" />
             </Col>
           </Form.Group>
         </div>
         <div className="d-flex justify-content-md-end">
-          <Button variant="secondary" className="">
+          <Button type="submit" variant="secondary" className="">
             APPLY
           </Button>
         </div>

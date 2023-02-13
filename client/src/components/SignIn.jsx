@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Alert } from "bootstrap";
 import { useMutation } from "react-query";
 import { useState } from "react";
-import { API } from "../config/api";
+import { API, setAuthToken } from "../config/api";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
 
@@ -31,6 +31,7 @@ export default function SignIn(props) {
       e.preventDefault();
 
       const response = await API.post("/sign-in", userSignIn);
+      setAuthToken(response.data.data.token);
       dispatch({
         type: "LOGIN_SUCCESS",
         payload: response.data.data,

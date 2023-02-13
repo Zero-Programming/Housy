@@ -113,14 +113,6 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	dataContex := r.Context().Value("dataFile") // add this code
 	filename := dataContex.(string)             // add this code
 
-	// request := new(usersdto.UserRequest)
-	// if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-	// 	w.WriteHeader(http.StatusBadRequest)
-	// 	response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
-	// 	json.NewEncoder(w).Encode(response)
-	// 	return
-	// }
-
 	request := usersdto.UserRequest{
 		Fullname:   r.FormValue("fullname"),
 		Email:      r.FormValue("email"),

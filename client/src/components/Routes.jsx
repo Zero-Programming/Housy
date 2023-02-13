@@ -78,7 +78,7 @@ export default function RoutesPage() {
       // Get user data
       let payload = response.data.data;
       // Get token from local storage
-      payload.token = localStorage.token;
+      // payload.token = localStorage.token;
       // Send data to useContext
       dispatch({
         type: "USER_SUCCESS",
