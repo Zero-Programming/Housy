@@ -6,6 +6,7 @@ import (
 	"housy/pkg/mysql"
 	"housy/routes"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/handlers"
 
@@ -38,7 +39,8 @@ func main() {
 	var AllowedMethods = handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS", "PATCH", "DELETE"})
 	var AllowedOrigins = handlers.AllowedOrigins([]string{"*"})
 
-	var port = "8080"
+	// var port = "8080"
+	var port = os.Getenv("PORT");
 	fmt.Println("server running localhost:"+port)
 
 	// Embed the setup allowed in 2 parameter on this below code ...

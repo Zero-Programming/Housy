@@ -110,8 +110,11 @@ func convertResponse(u models.User) usersdto.UserResponse {
 func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	dataContex := r.Context().Value("dataFile") // add this code
-	filename := dataContex.(string)             // add this code
+	// dataContex := r.Context().Value("dataFile") // add this code
+	// filename := dataContex.(string)             // add this code
+
+	dataContex := r.Context().Value("dataFile")
+	filepath := dataContex.(string)
 
 	request := usersdto.UserRequest{
 		Fullname:   r.FormValue("fullname"),
@@ -121,7 +124,7 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		Gender:     r.FormValue("gender"),
 		Phone:      r.FormValue("phone"),
 		Address:    (r.FormValue("address")),
-		Image:      filename,
+		Image:      filepath,
 	}
 
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
@@ -237,12 +240,15 @@ func (h *handlerUser) ChangePassword(w http.ResponseWriter, r *http.Request) {
 func (h *handlerUser) ChangeImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	dataContex := r.Context().Value("dataFile") // add this code
-	filename := dataContex.(string)             // add this code
+	// dataContex := r.Context().Value("dataFile") // add this code
+	// filename := dataContex.(string)             // add this code
 
-	request := usersdto.ChangeImageRequest{
-		Image: filename,
-	}
+	dataContex := r.Context().Value("dataFile")
+	filepath := dataContex.(string)
+
+	// request := usersdto.ChangeImageRequest{
+	// 	Image: filepath,
+	// }
 
 	userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
 	userId := int(userInfo["id"].(float64))
@@ -255,8 +261,8 @@ func (h *handlerUser) ChangeImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if request.Image != "" {
-		user.Image = request.Image
+	if filepath != "false" {
+		user.Image = filepath
 	}
 
 	data, err := h.UserRepository.ChangeImage(user)

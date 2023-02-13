@@ -2,19 +2,25 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	housesdto "housy/dto/house"
 	dto "housy/dto/result"
 	"housy/models"
 	"housy/repositories"
 	"net/http"
+	"os"
 	"strconv"
 
+	"context"
+
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"gorm.io/datatypes"
 )
 
-var path_file = "http://localhost:8080/uploads/"
+var path_file = os.Getenv("PATH_FILE")
 
 type handlerHouse struct {
 	HouseRepository repositories.HouseRepository
@@ -33,8 +39,13 @@ func (h *handlerHouse) FindHouses(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(err.Error())
 	}
 
+	// for i, p := range houses {
+	// 	houses[i].Image = path_file + p.Image
+	// }
+
 	for i, p := range houses {
-		houses[i].Image = path_file + p.Image
+		imagePath := os.Getenv("PATH_FILE") + p.Image
+		houses[i].Image = imagePath
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -77,7 +88,9 @@ func (h *handlerHouse) GetHouse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	house.Image = path_file + house.Image
+	// house.Image = path_file + house.Image
+
+	house.Image = os.Getenv("PATH_FILE") + house.Image
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: convertResponseHouse(house)}
@@ -87,8 +100,10 @@ func (h *handlerHouse) GetHouse(w http.ResponseWriter, r *http.Request) {
 func (h *handlerHouse) CreateHouse(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	dataContex := r.Context().Value("dataFile") // add this code
-	filename := dataContex.(string)             // add this code
+	// dataContex := r.Context().Value("dataFile") // add this code
+	// filename := dataContex.(string)             // add this code
+	dataContex := r.Context().Value("dataFile")
+	filepath := dataContex.(string)
 
 	price, _ := strconv.Atoi(r.FormValue("price"))
 	bedroom, _ := strconv.Atoi(r.FormValue("bedroom"))
@@ -115,6 +130,21 @@ func (h *handlerHouse) CreateHouse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var ctx = context.Background()
+	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
+	var API_KEY = os.Getenv("API_KEY")
+	var API_SECRET = os.Getenv("API_SECRET")
+
+	// Add your Cloudinary credentials ...
+	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
+
+	// Upload file to Cloudinary ...
+	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "housy"})
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
 	house := models.House{
 		Name:        request.Name,
 		CityName:    request.CityName,
@@ -126,7 +156,7 @@ func (h *handlerHouse) CreateHouse(w http.ResponseWriter, r *http.Request) {
 		Area:        request.Area,
 		Bedroom:     request.Bedroom,
 		Bathroom:    request.Bathroom,
-		Image:       filename,
+		Image:       resp.SecureURL,
 	}
 
 	house, err = h.HouseRepository.CreateHouse(house)
@@ -174,8 +204,11 @@ func (h *handlerHouse) DeleteHouse(w http.ResponseWriter, r *http.Request) {
 func (h *handlerHouse) UpdateHouse(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	dataContex := r.Context().Value("dataFile") // add this code
-	filename := dataContex.(string)             // add this code
+	// dataContex := r.Context().Value("dataFile") // add this code
+	// filename := dataContex.(string)             // add this code
+
+	dataContex := r.Context().Value("dataFile")
+	filepath := dataContex.(string)
 
 	price, _ := strconv.Atoi(r.FormValue("price"))
 	bedroom, _ := strconv.Atoi(r.FormValue("bedroom"))
@@ -191,7 +224,7 @@ func (h *handlerHouse) UpdateHouse(w http.ResponseWriter, r *http.Request) {
 		Price:       price,
 		Bedroom:     bedroom,
 		Bathroom:    bathroom,
-		Image:       filename,
+		// Image:       filepath,
 	}
 
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
@@ -243,8 +276,8 @@ func (h *handlerHouse) UpdateHouse(w http.ResponseWriter, r *http.Request) {
 		house.Area = request.Area
 	}
 
-	if request.Image != "" {
-		house.Image = request.Image
+	if filepath != "false" {
+		house.Image = filepath
 	}
 
 	data, err := h.HouseRepository.UpdateHouse(house)
