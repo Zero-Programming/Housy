@@ -60,6 +60,8 @@ export default function ChangePassword(props) {
 
       // navigate("/product-admin");
     } catch (error) {
+
+      alert("password lama kamu tidak salah")
       console.log(error);
     }
   });

@@ -18,7 +18,7 @@ export default function ContentData(props) {
   if (props.house != undefined) {
     return (
       <>
-        <Col className="d-flex p-0" style={{ marginLeft: "380px" }}>
+        <Col className="d-flex p-0" style={{ marginLeft: "460px" }}>
           <div className="ms-1 w100" style={{ paddingTop: "105px" }}>
             <div className="d-flex warp gap-3 w100">
               {props.house?.map((value, index) => {
