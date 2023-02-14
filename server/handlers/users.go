@@ -22,8 +22,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var path_file1 = "http://localhost:8080/uploads/"
-
 type handlerUser struct {
 	UserRepository repositories.UserRepository
 }
@@ -41,9 +39,9 @@ func (h *handlerUser) FindUsers(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(err.Error())
 	}
 
-	for i, p := range users {
-		users[i].Image = path_file1 + p.Image
-	}
+	// for i, p := range users {
+	// 	users[i].Image = path_file1 + p.Image
+	// }
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: users}
@@ -63,7 +61,7 @@ func (h *handlerUser) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user.Image = path_file1 + user.Image
+	// user.Image = path_file1 + user.Image
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: convertResponse(user)}

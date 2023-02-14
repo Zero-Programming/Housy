@@ -41,7 +41,7 @@ func main() {
 
 	// var port = "8080"
 	var port = os.Getenv("PORT");
-	fmt.Println("server running localhost:"+port)
+	fmt.Println("server running :"+port)
 
 	// Embed the setup allowed in 2 parameter on this below code ...
 	http.ListenAndServe(":"+port, handlers.CORS(AllowedHeaders, AllowedMethods, AllowedOrigins)(r))
