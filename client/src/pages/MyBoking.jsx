@@ -89,12 +89,12 @@ export default function MyBooking(props) {
         onSuccess: function (result) {
           /* You may add your own implementation here */
           console.log(result);
-          history.push("/profile");
+          history("/history/");
         },
         onPending: function (result) {
           /* You may add your own implementation here */
           console.log(result);
-          history.push("/profile");
+          history("/mt-booking");
         },
         onError: function (result) {
           /* You may add your own implementation here */

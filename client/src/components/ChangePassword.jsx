@@ -8,7 +8,7 @@ import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 
 export default function ChangePassword(props) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [state, dispatch] = useContext(UserContext);
   const id = state.user.id;
 
@@ -73,13 +73,13 @@ export default function ChangePassword(props) {
             <Form.Label className="fw-bold">Old Password</Form.Label>
             <Form.Control type="password" placeholder="Password" value={form.password} name="old_password" onChange={handleChange} />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="confirmPassword">
-            <Form.Label className="fw-bold">Confirm Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" value={form.confirm_password} name="confirm_password" onChange={handleChange} />
-          </Form.Group>
           <Form.Group className="mb-3" controlId="newPassword">
             <Form.Label className="fw-bold">New Password</Form.Label>
             <Form.Control type="password" placeholder="New Password" value={form.new_password} name="new_password" onChange={handleChange} />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="confirmPassword">
+            <Form.Label className="fw-bold">Confirm Password</Form.Label>
+            <Form.Control type="password" placeholder="Password" value={form.confirm_password} name="confirm_password" onChange={handleChange} />
           </Form.Group>
           <Button type="submit" className="w-100">
             Save

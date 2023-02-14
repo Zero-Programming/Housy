@@ -96,7 +96,7 @@ export default function DetailProperty() {
             </div>
             <div>
               <h4 className="fw-bold">Description</h4>
-              <p style={{ textAlign: "justify" }}></p>
+              <p style={{ textAlign: "justify" }}>{detail?.description}</p>
             </div>
             <div className="d-flex justify-content-md-end">
               {!localStorage.getItem("token") ? (

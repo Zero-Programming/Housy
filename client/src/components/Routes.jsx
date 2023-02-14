@@ -109,7 +109,7 @@ export default function RoutesPage() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/my-booking/:id" element={<MyBooking />} />
           <Route path="my-booking" element={<MybookingHistory />} />
-          <Route path="/history/" element={<Invoice />} />
+          <Route path="/history" element={<Invoice />} />
           <Route path="/home-owner" element={<HomeOwner />} />
           <Route element={<PrivateRoute />}>
             <Route path="/add-property" element={<AddProperty />} />
