@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	authdto "housy/dto/auth"
@@ -8,12 +9,15 @@ import (
 	usersdto "housy/dto/users"
 	"housy/models"
 	"housy/pkg/bcrypt"
+	"os"
 
 	// "housy/pkg/bcrypt"
 	"housy/repositories"
 	"net/http"
 	"strconv"
 
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
 )
@@ -127,6 +131,21 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		Image:      filepath,
 	}
 
+	var ctx = context.Background()
+	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
+	var API_KEY = os.Getenv("API_KEY")
+	var API_SECRET = os.Getenv("API_SECRET")
+
+	// Add your Cloudinary credentials ...
+	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
+
+	// Upload file to Cloudinary ...
+	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "refactor-dumbmerch"})
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
 	user, err := h.UserRepository.GetUser(int(id))
 	if err != nil {
@@ -165,7 +184,7 @@ func (h *handlerUser) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if request.Image != "" {
-		user.Image = request.Image
+		user.Image = resp.SecureURL
 	}
 
 	data, err := h.UserRepository.UpdateUser(user)
@@ -246,12 +265,27 @@ func (h *handlerUser) ChangeImage(w http.ResponseWriter, r *http.Request) {
 	dataContex := r.Context().Value("dataFile")
 	filepath := dataContex.(string)
 
-	// request := usersdto.ChangeImageRequest{
-	// 	Image: filepath,
-	// }
+	request := usersdto.ChangeImageRequest{
+		Image: filepath,
+	}
 
 	userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
 	userId := int(userInfo["id"].(float64))
+
+	var ctx = context.Background()
+	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
+	var API_KEY = os.Getenv("API_KEY")
+	var API_SECRET = os.Getenv("API_SECRET")
+
+	// Add your Cloudinary credentials ...
+	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
+
+	// Upload file to Cloudinary ...
+	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "housy"})
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 
 	user, err := h.UserRepository.GetUser(int(userId))
 	if err != nil {
@@ -261,8 +295,8 @@ func (h *handlerUser) ChangeImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if filepath != "false" {
-		user.Image = filepath
+	if request.Image != "false" {
+		user.Image = resp.SecureURL
 	}
 
 	data, err := h.UserRepository.ChangeImage(user)

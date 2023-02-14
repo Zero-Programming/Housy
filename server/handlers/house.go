@@ -102,6 +102,7 @@ func (h *handlerHouse) CreateHouse(w http.ResponseWriter, r *http.Request) {
 
 	// dataContex := r.Context().Value("dataFile") // add this code
 	// filename := dataContex.(string)             // add this code
+	// get image filepath
 	dataContex := r.Context().Value("dataFile")
 	filepath := dataContex.(string)
 
@@ -224,7 +225,22 @@ func (h *handlerHouse) UpdateHouse(w http.ResponseWriter, r *http.Request) {
 		Price:       price,
 		Bedroom:     bedroom,
 		Bathroom:    bathroom,
-		// Image:       filepath,
+		Image:       filepath,
+	}
+
+	var ctx = context.Background()
+	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
+	var API_KEY = os.Getenv("API_KEY")
+	var API_SECRET = os.Getenv("API_SECRET")
+
+	// Add your Cloudinary credentials ...
+	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
+
+	// Upload file to Cloudinary ...
+	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "housy"})
+
+	if err != nil {
+		fmt.Println(err.Error())
 	}
 
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
@@ -276,8 +292,8 @@ func (h *handlerHouse) UpdateHouse(w http.ResponseWriter, r *http.Request) {
 		house.Area = request.Area
 	}
 
-	if filepath != "false" {
-		house.Image = filepath
+	if request.Image != "false" {
+		house.Image = resp.SecureURL
 	}
 
 	data, err := h.HouseRepository.UpdateHouse(house)
